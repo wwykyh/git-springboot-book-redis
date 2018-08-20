@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.AdminMapper">
+	<resultMap type="com.example.model.Book" id="BookResultMap">
+		<id column="BookId" property="bookId" />
+		<result column="BooktypeId" property="booktypeId" />
+		<result column="BookName" property="bookName" />
+		<result column="BookAuthor" property="bookAuthor" />
+		<result column="BookEdition" property="bookEdition" />	
+		<result column="BookPrice" property="bookPrice" />
+		<result column="BookAmount" property="bookAmount" />
+		<result column="BookIntroduce" property="bookIntroduce" />
+		<result  column="IssuanceDate" property="issuanceDate" />
+		<result column="BookImages" property="bookImages" />
+		<result column="bookspecil" property="bookSpecil" />
+		<result column="bookdiscount" property="bookDiscount" />	
+		
+		<association property="category" javaType="com.example.model.Category"  column="booktypeId" foreignColumn="TypeId">
+		<id column="typeId" property="typeId" />
+		<result column="typeName" property="typeName" />
+		<result column="typeIntroduce" property="typeIntroduce" />
+	</association>
+</resultMap>
+
+<resultMap type="com.example.model.Category" id="CategoryResultMap">
+		<id column="typeId" property="typeId" />
+		<result column="typename" property="typeName" />
+		<result column="typeIntroduce" property="typeIntroduce" />
+</resultMap>
+	
+	<select id="findAllBook" resultMap="BookResultMap">
+		select 
+		b.bookid as bookId,b.booktypeid as booktypeId,b.bookname as bookName,b.bookauthor as bookAuthor,b.bookedition as bookEdition,b.bookprice as bookPrice,
+		b.bookamount as bookAmount,b.bookintroduce as bookIntroduce,b.IssuanceDate as IssuanceDate,b.bookimages as bookImages,b.bookspecil as bookspecil,b.bookdiscount as bookdiscount,
+		c.typeId as typeId,c.typename as typeName,c.typeintroduce as typeIntroduce from book b 
+		left outer join category c on c.typeId=b.booktypeId ORDER BY TypeName asc
+	</select>
+	
+	<select id="findAllType" resultMap="CategoryResultMap">
+		select typeid, typename,typeIntroduce from category
+	</select>
+	
+	<select id="findByType" resultMap="CategoryResultMap" parameterType="java.lang.String">
+		select typeid, typename,typeIntroduce from category where typename like #{typename}
+	</select>
+	
+	<select id="findOneType" resultMap="CategoryResultMap" parameterType="int">
+		select typeid, typename,typeIntroduce from category where typeId=#{id}
+	</select>
+	
+	<select id="findOneBook" resultMap="BookResultMap" parameterType="int">
+		select 
+		b.bookid as bookId,b.booktypeid as booktypeId,b.bookname as bookName,b.bookauthor as bookAuthor,b.bookedition as bookEdition,b.bookprice as bookPrice,
+		b.bookamount as bookAmount,b.bookintroduce as bookIntroduce,b.IssuanceDate as IssuanceDate,b.bookimages as bookImages,b.bookspecil as bookspecil,b.bookdiscount as bookdiscount,
+		c.typeId as typeId,c.typename as typeName,c.typeintroduce as typeIntroduce from book b 
+		left outer join category c on c.typeId=b.booktypeId where bookId=#{bookId}
+	</select>
+	
+	
+	<insert id="inserteBook" parameterType="com.example.model.Book" useGeneratedKeys="true" keyProperty="id">
+		insert into book(bookname, booktypeid,bookauthor,bookedition,bookprice,
+		bookamount,bookintroduce,issuancedate,bookimages,bookspecil,bookdiscount) 
+		values(#{bookName},#{booktypeId},#{bookAuthor},#{bookEdition},#{bookPrice},#{bookAmount},#{bookIntroduce},#{issuanceDate},#{bookImages},#{bookSpecil},#{bookDiscount})
+	</insert>
+	
+	<insert id="inserteBookType" parameterType="com.example.model.Category" useGeneratedKeys="true" keyProperty="id">
+		insert into category (typename,typeIntroduce)
+		values(#{typeName},#{typeIntroduce})
+	</insert>
+	
+
+	
+		<update id="updateType" parameterType="com.example.model.Category" >
+		update category set typename=#{typeName},typeIntroduce=#{typeIntroduce}
+		 where typeId=#{typeId}
+	</update>
+	
+	<update id="deleteType" parameterType="int">
+		delete from category where typeId=#{typeId}
+	</update>
+	
+	<!--  <select id="selectAdmin" parameterType="String" >
+		select count(*) from admin where adminname=#{0} and adminpassword=#{1} 
+	</select> -->
+	
+	 <!-- <select id="findspecilBook"  resultMap="BookResultMap">
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,issuancedate,
+		bookimages,bookdiscount from book where bookspecil=1  LIMIT 3
+	</select> -->
+	<!--  <select id="findOneBook"  resultMap="BookResultMap" parameterType="int">
+		select bookid,BooktypeId,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages,bookdiscount from book  where bookid=#{id}
+	</select> -->
+	
+	<!-- <select id="findNewAllBook"  resultMap="BookResultMap">
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages from book  ORDER BY bookid DESC LIMIT 3
+	</select> -->
+	
+<!-- 	<select id="selectByTypeId"  resultMap="BookResultMap" parameterType="int">
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages from book where BooktypeId=#{0} and BookId!=#{1} ORDER BY bookid DESC LIMIT 6
+	</select> -->
+	<!-- <select id="selectByDiscount"  resultMap="BookResultMap" >
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages,bookdiscount from book where bookdiscount != 1  ORDER BY bookdiscount asc LIMIT 3
+	</select> -->
+	<!-- <select id="selectAllByDiscount"  resultMap="BookResultMap" >
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages,bookdiscount from book where bookdiscount != 1  ORDER BY bookdiscount desc LIMIT 4
+	</select> -->
+	
+	<!-- <select id="selectByName"  resultMap="BookResultMap" parameterType="java.lang.String" >
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages,bookdiscount from book where bookname like #{bookname}  
+	</select> -->
+	
+<!--	<select id="findOneAuthor" resultMap="AuthorResultMap" parameterType="int">
+			select id, name, phone from Author where id=#{id}
+	</select> -->
+	
+		<!-- <insert id="insertUser" parameterType="com.example.model.Users" useGeneratedKeys="true" keyProperty="id">
+		insert into users(username, password,useremail,userphone,useradress,userdate) values(#{userName},#{password},#{userEmail},#{userPhone},#{userAdress},#{userDate})
+	</insert> -->
+	
+	<update id="deleteBook" parameterType="int">
+		delete from Book where BookId=#{bookId}
+	</update>
+	
+		<update id="updateBook" parameterType="com.example.model.Book">
+		update book set bookprice=#{bookPrice},bookamount=#{bookAmount},
+		bookintroduce=#{bookIntroduce},bookimages=#{bookImages},
+		bookdiscount=#{bookDiscount},bookspecil=#{bookSpecil} where BookId=#{bookId}
+	</update>
+	
+</mapper>

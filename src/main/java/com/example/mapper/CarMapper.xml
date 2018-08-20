@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.CarMapper">
+	<resultMap type="com.example.model.Car" id="CarResultMap">
+		<id column="car_Id" property="car_Id" />
+		<result column="car_Userid" property="car_Userid" />
+		<result column="car_Bookid" property="car_Bookid" />
+		<result column="car_Images" property="car_Images" />
+		<result column="car_Bookname" property="car_Bookname" />
+		<result column="car_Price" property="car_Price" />	
+		<result column="car_Number" property="car_Number" />
+		<result column="car_Total" property="car_Total" />		
+</resultMap>
+	
+	<select id="findIdcar" parameterType="int" resultMap="CarResultMap">
+		select car_Id,car_Userid,car_Bookid,car_Images,car_Bookname,car_Price,car_Number,car_Total from car where car_Bookid=#{arg0} and car_Userid=#{arg1}
+	</select>
+	
+	<select id="findAllCar" parameterType="int" resultMap="CarResultMap">
+		select * from car where car_Userid=#{userid}
+	</select>
+	
+	<insert id="addCar" parameterType="com.example.model.Car" useGeneratedKeys="true" keyProperty="car_Id">
+		insert into car(car_Userid,car_Bookid,car_Images,car_Bookname,car_Price,car_Number,car_Total) 
+		values(#{car_Userid},#{car_Bookid},#{car_Images},#{car_Bookname},#{car_Price},#{car_Number},#{car_Total})
+	</insert>
+	
+<!--	<select id="findOneAuthor" resultMap="AuthorResultMap" parameterType="int">
+			select id, name, phone from Author where id=#{id}
+	</select> -->
+	
+<!-- 	<insert id="insertUser" parameterType="com.example.model.Users" useGeneratedKeys="true" keyProperty="id">
+		insert into users(username, password,useremail,userphone,useradress,userdate) values(#{userName},#{password},#{userEmail},#{userPhone},#{userAdress},#{userDate})
+	</insert> -->
+	<update id="updateCar" parameterType="com.example.model.Car">
+		update car set car_Number=car_Number+1,car_Total=car_number*car_Price where car_Bookid=#{arg0} and car_Userid=#{arg1} 
+	</update>
+	
+<!-- 	<update id="changeAddCar" parameterType="com.example.model.Car">
+		update car set car_Number=car_Number+1 where car_Bookid=#{0} and car_Userid=#{1} 
+	</update> -->
+	
+	<update id="changeDelCar" parameterType="com.example.model.Car">
+		update car set car_Number=car_Number-1,car_Total=car_number*car_Price where car_Bookid=#{arg0} and car_Userid=#{arg1} 
+	</update>
+	
+	<update id="deleteCar" parameterType="com.example.model.Car">
+		delete from car where car_Bookid=#{arg0} and car_Userid=#{arg1} 
+	</update>
+		<update id="delete" parameterType="int">
+		delete from car where car_Userid=#{userid} 
+	</update>
+</mapper>

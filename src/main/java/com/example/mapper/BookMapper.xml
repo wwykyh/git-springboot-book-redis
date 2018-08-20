@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.BookMapper">
+	<resultMap type="com.example.model.Book" id="BookResultMap">
+		<id column="BookId" property="bookId" />
+		<result column="BooktypeId" property="booktypeId" />
+		<result column="BookName" property="bookName" />
+		<result column="BookAuthor" property="bookAuthor" />
+		<result column="BookEdition" property="bookEdition" />	
+		<result column="BookPrice" property="bookPrice" />
+		<result column="BookAmount" property="bookAmount" />
+		<result column="BookIntroduce" property="bookIntroduce" />
+		<result  column="IssuanceDate" property="issuanceDate" />
+		<result column="BookImages" property="bookImages" />
+		<result column="bookspecil" property="bookSpecil" />
+		<result column="bookdiscount" property="bookDiscount" />		
+</resultMap>
+	
+	 <select id="findspecilBook"  resultMap="BookResultMap">
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,issuancedate,
+		bookimages,bookdiscount from book where bookspecil=1  LIMIT 3
+	</select>
+	 <select id="findOneBook"  resultMap="BookResultMap" parameterType="int">
+		select bookid,BooktypeId,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages,bookdiscount from book  where bookid=#{id}
+	</select>
+	
+	<select id="findNewAllBook"  resultMap="BookResultMap">
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages from book  ORDER BY bookid DESC LIMIT 3
+	</select>
+	
+	<select id="selectByTypeId"  resultMap="BookResultMap" parameterType="int">
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages from book where BooktypeId=#{arg0} and BookId!=#{arg1} ORDER BY bookid DESC LIMIT 6
+	</select>
+	<select id="selectByDiscount"  resultMap="BookResultMap" >
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages,bookdiscount from book where bookdiscount != 1  ORDER BY bookdiscount asc LIMIT 3
+	</select>
+	<select id="selectAllByDiscount"  resultMap="BookResultMap" >
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages,bookdiscount from book where bookdiscount != 1  ORDER BY bookdiscount desc LIMIT 4
+	</select>
+	
+	<select id="selectByName"  resultMap="BookResultMap" parameterType="java.lang.String" >
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages,bookdiscount from book where bookname like #{bookname}  
+	</select>
+	
+<!--	<select id="findOneAuthor" resultMap="AuthorResultMap" parameterType="int">
+			select id, name, phone from Author where id=#{id}
+	</select> -->
+	
+		<!-- <insert id="insertUser" parameterType="com.example.model.Users" useGeneratedKeys="true" keyProperty="id">
+		insert into users(username, password,useremail,userphone,useradress,userdate) values(#{userName},#{password},#{userEmail},#{userPhone},#{userAdress},#{userDate})
+	</insert> -->
+	
+	
+	
+	<!-- 	<update id="deleteAuthor" parameterType="int">
+		delete from Author where id=#{id}
+	</update> -->
+	<update id="updateBook" parameterType="int">
+		update book set BookAmount=BookAmount-#{arg1} where BookId=#{arg0} 
+	</update>
+</mapper>

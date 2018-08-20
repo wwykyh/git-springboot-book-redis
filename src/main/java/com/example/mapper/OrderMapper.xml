@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.OrderMapper">
+	<resultMap type="com.example.model.Orders" id="OrderResultMap">
+		<id column="orderId" property="orderId" />
+		<result column="bookId" property="bookId" />
+		<result column="userId" property="userId" />
+		<result column="bookCount" property="bookCount" />
+		<result column="bookPrice" property="bookPrice" />	
+		<result column="orderTime" property="orderTime" />	
+		
+	<association property="book" javaType="com.example.model.Book"  column="bookId" foreignColumn="bookId">
+		<id column="bookId" property="bookId" />
+		<result column="booktypeId" property="booktypeId" />
+		<result column="bookName" property="bookName" />
+		<result column="bookAuthor" property="bookAuthor" />
+		<result column="bookEdition" property="bookEdition" />
+		<result column="bookPrice" property="bookPrice" />
+		<result column="bookAmount" property="bookAmount" />
+		<result column="bookIntroduce" property="bookIntroduce" />
+		<result column="issuanceDate" property="issuanceDate" />
+		<result column="bookImages" property="bookImages" />
+	</association>
+	
+	<association property="users" javaType="com.example.model.Users"  column="userId" foreignColumn="userId">
+		<id column="userid" property="userId" />
+		<result column="username" property="userName" />
+		<result column="password" property="password" />
+		<result column="useremail" property="userEmail" />
+		<result column="userphone" property="userPhone" />	
+		<result column="useradress" property="userAdress" />
+		<result javaType="java.util.Date" column="userdate" property="userDate" />
+	</association>	
+</resultMap>
+
+	<insert id="addOrder" parameterType="com.example.model.Orders" useGeneratedKeys="true" keyProperty="OrderId">
+		insert into Orders(BookId,UserId,BookCount,BookPrice,OrderTime) 
+		values(#{bookId},#{userId},#{bookCount},#{bookPrice},NOW())
+	</insert>
+	
+	<select id="findIdOrder"  resultMap="OrderResultMap">
+		select u.username,o.orderId,o.bookCount,o.bookPrice,o.orderTime,b.bookImages,b.bookName
+		from orders o
+		left outer join book b
+		on o.bookId=b.bookId
+		left outer join users u
+		on o.userid=u.userid
+		where o.userId=#{userId}
+	</select>
+	
+	<select id="findAllOrder"  resultMap="OrderResultMap">
+		select u.username,o.orderId,o.bookCount,o.bookPrice,o.orderTime,b.bookImages,b.bookName
+		from orders o
+		left outer join book b
+		on o.bookId=b.bookId
+		left outer join users u
+		on o.userid=u.userid
+	</select>
+	
+	<update id="deleteIdOrder" parameterType="int">
+		delete from orders where orderId=#{id}
+	</update>
+<!-- 	 	 <select id="findOneBook"  resultMap="BookResultMap" parameterType="int">
+		select bookid,BooktypeId,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages,bookdiscount from book  where bookid=#{id}
+	</select>
+	
+	<select id="findNewAllBook"  resultMap="BookResultMap">
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages from book  ORDER BY bookid DESC LIMIT 3
+	</select>
+	
+	<select id="selectByTypeId"  resultMap="BookResultMap" parameterType="int">
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages from book where BooktypeId=#{0} and BookId!=#{1} ORDER BY bookid DESC LIMIT 6
+	</select>
+	<select id="selectByDiscount"  resultMap="BookResultMap" >
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages,bookdiscount from book where bookdiscount != 1  ORDER BY bookdiscount asc LIMIT 3
+	</select>
+	<select id="selectAllByDiscount"  resultMap="BookResultMap" >
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages,bookdiscount from book where bookdiscount != 1  ORDER BY bookdiscount desc LIMIT 4
+	</select>
+	
+	<select id="selectByName"  resultMap="BookResultMap" parameterType="java.lang.String" >
+		select bookid,bookname,bookauthor,bookedition,bookprice,bookamount,bookintroduce,
+		bookimages,bookdiscount from book where bookname like #{bookname}  
+	</select>
+	
+	<update id="updateBook" parameterType="int">
+		update book set BookAmount=BookAmount-#{1} where BookId=#{0} 
+	</update> -->
+</mapper>
