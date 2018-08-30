@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.CategoryMapper">	
+	<resultMap id="BookResultMap" type="com.example.model.Book">
+		<id column="bookId" property="bookId" />
+		<result column="booktypeId" property="booktypeId" />
+		<result column="bookName" property="bookName" />
+		<result column="bookAuthor" property="bookAuthor" />
+		<result column="bookEdition" property="bookEdition" />
+		<result column="bookPrice" property="bookPrice" />
+		<result column="bookAmount" property="bookAmount" />
+		<result column="bookIntroduce" property="bookIntroduce" />
+		<result column="issuanceDate" property="issuanceDate" />
+		<result column="bookImages" property="bookImages" />
+		
+		<association property="category" javaType="com.example.model.Category"  column="booktypeId" foreignColumn="TypeId">
+		<id column="typeId" property="typeId" />
+		<result column="typeName" property="typeName" />
+		<result column="typeIntroduce" property="typeIntroduce" />
+	</association>
+	</resultMap>
+	<select id="findAllBook" resultMap="BookResultMap" parameterType="int">
+		<![CDATA[
+		select * from
+		(
+		SELECT @rownum:=@rownum+1 AS rownum, book.*
+		FROM (SELECT @rownum:=0) r, book
+		where @rownum<#{page}*9
+
+		) t
+		where t.rownum>(#{page}-1)*9;
+
+		]]>
+		
+	</select>
+	
+	<select id="findTypeBook" parameterType="java.lang.String" resultMap="BookResultMap">
+		select 
+		b.bookid as bookId,b.booktypeid as booktypeId,b.bookname as bookName,b.bookauthor as bookAuthor,b.bookedition as bookEdition,b.bookprice as bookPrice,
+		b.bookamount as bookAmount,b.bookintroduce as bookIntroduce,b.bookimages as bookImages from book b
+		left outer join category c on c.typeId=b.booktypeId 
+		where c.typeName=#{type}
+	</select>
+</mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://mybatis.org/schema/mybatis-spring 
+		http://mybatis.org/schema/mybatis-spring.xsd
+		">
+
+   	<context:annotation-config />  
+	<mvc:annotation-driven/> 
+	<context:component-scan base-package="com.example"></context:component-scan>
+	<mybatis:scan base-package="com.example"/>
+	<!--引入属性文件 -->  
+    <context:property-placeholder location="classpath:datasource.properties"/> 
+	
+		<mvc:resources location="/WEB-INF/static/images/" mapping="/images/**"></mvc:resources>
+		<mvc:resources location="/WEB-INF/static/js/" mapping="/js/**"></mvc:resources>
+		<mvc:resources location="/WEB-INF/jsp/" mapping="/jsp/**"></mvc:resources>
+		<mvc:resources location="/WEB-INF/jsp/admin/" mapping="/admin/**"></mvc:resources>
+		<!-- <mvc:resources location="/WEB-INF/jsp/admin/image/" mapping="/admin/images/**"></mvc:resources>
+		<mvc:resources location="/WEB-INF/jsp/admin/static/" mapping="/admin/static/**"></mvc:resources>
+		<mvc:resources location="/WEB-INF/jsp/admin/static/" mapping="/admin/css/**"></mvc:resources> -->
+		
+	<!-- 	<mvc:resources location="/WEB-INF/jsp/admin/js/" mapping="/jsp/admin/js/**"></mvc:resources> -->
+		<mvc:resources location="/WEB-INF/bookImage/" mapping="/bookImage/**"></mvc:resources>
+		<mvc:resources location="/WEB-INF/booktext/" mapping="/booktext/**"></mvc:resources>
+	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/WEB-INF/jsp/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+		
+	</bean>
+	
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+				<property name="basename" value="/WEB-INF/message"></property>
+				<property name="cacheSeconds" value="0" />  
+				<property name="defaultEncoding" value="UTF-8"/>  
+	</bean>
+
+	<mvc:interceptors>
+		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+					<property name="paramName" value="sitelang"></property>
+		</bean>
+		<bean id="adminLoginInterceptor" class="com.example.interceptor.AdminLoginInterceptor" />
+	</mvc:interceptors>
+	
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"></bean>
+
+	<bean id="messageAdapter" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <!-- Support JSON --> 
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="exceptionMessageAdapter" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver">
+       <property name="messageConverters">
+           <list>
+               <!-- Support JSON --> 
+               <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+           </list>
+       </property>
+    </bean>
+    
+    <bean id="dataSource"
+	  class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driver}"></property>
+		<property name="url" value="${jdbc.url}"></property>
+		<property name="username" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+	</bean>
+	
+	<!-- mybatis配置 -->  
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">  
+        <property name="dataSource" ref="dataSource" />  
+        <property name="configLocation" value="classpath:mybatis-config.xml"></property>
+    </bean>
+	
+	 <!-- 文件上传的配置 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">   
+        <!-- 指定所上传文件的总大小不能超过200KB。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->   
+        <property name="maxUploadSize" value="200000"/>   
+    </bean>  
+    
+    <!-- 该异常是SpringMVC在检查上传的文件信息时抛出来的，而且此时还没有进入到Controller方法中 -->   
+    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">   
+        <property name="exceptionMappings">   
+            <props>   
+                <!-- 遇到MaxUploadSizeExceededException异常时，自动跳转到WebContent目录下的error.jsp页面 -->   
+                <prop key="org.springframework.web.multipart.MaxUploadSizeExceededException">error</prop>   
+            </props>   
+        </property>   
+    </bean>
+	
+	
+</beans>

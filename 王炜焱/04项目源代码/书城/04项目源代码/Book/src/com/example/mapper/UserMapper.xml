@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.UserMapper">
+	<resultMap type="com.example.model.Users" id="UserResultMap">
+		<id column="userid" property="userId" />
+		<result column="username" property="userName" />
+		<result column="password" property="password" />
+		<result column="useremail" property="userEmail" />
+		<result column="userphone" property="userPhone" />	
+		<result column="useradress" property="userAdress" />
+		<result javaType="java.util.Date" column="userdate" property="userDate" />		
+</resultMap>
+	
+	 <select id="selectUser" parameterType="String" resultMap="UserResultMap">
+		select userid,username,password,useremail,userphone,useradress from users where username=#{0} and password=#{1} 
+	</select>
+	
+	 <select id="selectOneUser" parameterType="int" resultMap="UserResultMap">
+		select userid,username,password,useremail,userphone,useradress from users where userid=#{userId}
+	</select>
+	
+<!--	<select id="findOneAuthor" resultMap="AuthorResultMap" parameterType="int">
+			select id, name, phone from Author where id=#{id}
+	</select> -->
+	
+		<insert id="insertUser" parameterType="com.example.model.Users" useGeneratedKeys="true" keyProperty="id">
+		insert into users(username, password,useremail,userphone,useradress,userdate) values(#{userName},#{password},#{userEmail},#{userPhone},#{userAdress},#{userDate})
+	</insert>
+	
+	
+	
+		<update id="updateUser" parameterType="com.example.model.Users">
+		update users set username=#{userName},password=#{password},useremail=#{userEmail},useradress=#{userAdress},userphone=#{userPhone}
+		where userid=#{userId}
+	</update> 
+	
+</mapper>
